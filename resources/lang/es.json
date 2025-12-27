@@ -1,0 +1,121 @@
+{
+  "app.name": "Finanzas",
+
+  "layout.platform": "Plataforma",
+  "layout.dashboard": "Panel",
+  "layout.settings": "Configuración",
+  "layout.logout": "Cerrar sesión",
+
+  "common.search": "Buscar",
+  "common.save": "Guardar",
+  "common.saved": "Guardado.",
+  "common.cancel": "Cancelar",
+  "common.back": "Volver",
+  "common.confirm": "Confirmar",
+
+  "auth.fields.name": "Nombre",
+  "auth.fields.email": "Correo electrónico",
+  "auth.fields.password": "Contraseña",
+  "auth.fields.password_confirmation": "Confirmar contraseña",
+
+  "auth.placeholders.name": "Nombre completo",
+  "auth.placeholders.email": "correo@ejemplo.com",
+
+  "auth.login.title": "Iniciar sesión en tu cuenta",
+  "auth.login.description": "Introduce tu correo electrónico y contraseña para iniciar sesión",
+  "auth.login.button": "Iniciar sesión",
+  "auth.login.forgot": "¿Olvidaste tu contraseña?",
+  "auth.login.remember": "Recordarme",
+  "auth.login.no_account": "¿No tienes una cuenta?",
+  "auth.login.link": "Iniciar sesión",
+
+  "auth.register.title": "Crear una cuenta",
+  "auth.register.description": "Completa los datos para crear tu cuenta",
+  "auth.register.button": "Crear cuenta",
+  "auth.register.have_account": "¿Ya tienes una cuenta?",
+  "auth.register.link": "Regístrate",
+
+  "auth.forgot.title": "Olvidé mi contraseña",
+  "auth.forgot.description": "Introduce tu correo para recibir el enlace de restablecimiento",
+  "auth.forgot.button": "Enviar enlace de restablecimiento",
+  "auth.forgot.back_prefix": "O vuelve a",
+
+  "auth.reset.title": "Restablecer contraseña",
+  "auth.reset.description": "Introduce tu nueva contraseña a continuación",
+  "auth.reset.button": "Restablecer contraseña",
+
+  "auth.confirm.title": "Confirmar contraseña",
+  "auth.confirm.description": "Esta es un área segura de la aplicación. Confirma tu contraseña para continuar.",
+  "auth.confirm.button": "Confirmar",
+
+  "auth.verify.message": "Verifica tu dirección de correo haciendo clic en el enlace que acabamos de enviarte.",
+  "auth.verify.sent": "Se ha enviado un nuevo enlace de verificación al correo proporcionado.",
+  "auth.verify.resend": "Reenviar correo de verificación",
+
+  "auth.logout": "Cerrar sesión",
+
+  "auth.2fa.code.title": "Código de autenticación",
+  "auth.2fa.code.description": "Introduce el código generado por tu aplicación autenticadora.",
+
+  "auth.2fa.recovery.title": "Código de recuperación",
+  "auth.2fa.recovery.description": "Confirma el acceso a tu cuenta introduciendo uno de tus códigos de recuperación.",
+
+  "auth.2fa.fields.otp": "Código OTP",
+  "auth.2fa.fields.recovery": "Código de recuperación",
+
+  "auth.2fa.continue": "Continuar",
+
+  "auth.2fa.switch.prefix": "o puedes",
+  "auth.2fa.switch.to_recovery": "iniciar sesión usando un código de recuperación",
+  "auth.2fa.switch.to_code": "iniciar sesión usando un código de autenticación",
+
+  "auth.2fa.recovery_codes.title": "Códigos de recuperación de 2FA",
+  "auth.2fa.recovery_codes.description": "Los códigos de recuperación te permiten recuperar el acceso si pierdes tu dispositivo autenticador. Guárdalos en un gestor de contraseñas seguro.",
+  "auth.2fa.recovery_codes.view": "Ver códigos de recuperación",
+  "auth.2fa.recovery_codes.hide": "Ocultar códigos de recuperación",
+  "auth.2fa.recovery_codes.regenerate": "Generar nuevos códigos",
+  "auth.2fa.recovery_codes.aria_label": "Códigos de recuperación",
+  "auth.2fa.recovery_codes.note": "Cada código de recuperación puede usarse una sola vez y se eliminará después de su uso. Si necesitas más, haz clic en \"Generar nuevos códigos\" arriba.",
+
+  "settings.title": "Configuración",
+  "settings.subtitle": "Administra tu perfil y la configuración de la cuenta",
+
+  "settings.profile.title": "Perfil",
+  "settings.profile.subtitle": "Actualiza tu nombre y correo electrónico",
+  "settings.profile.email_unverified": "Tu correo electrónico no está verificado.",
+  "settings.profile.resend_verification": "Haz clic aquí para reenviar el correo de verificación.",
+  "settings.profile.verification_sent": "Se ha enviado un nuevo enlace de verificación a tu correo.",
+
+  "settings.password.title": "Actualizar contraseña",
+  "settings.password.subtitle": "Asegúrate de que tu cuenta use una contraseña larga y segura",
+  "settings.password.current": "Contraseña actual",
+  "settings.password.new": "Nueva contraseña",
+
+  "settings.appearance.title": "Apariencia",
+  "settings.appearance.subtitle": "Actualiza la configuración de apariencia de tu cuenta",
+  "settings.appearance.light": "Claro",
+  "settings.appearance.dark": "Oscuro",
+  "settings.appearance.system": "Sistema",
+
+  "settings.delete.title": "Eliminar cuenta",
+  "settings.delete.subtitle": "Elimina tu cuenta y todos tus datos",
+  "settings.delete.button": "Eliminar cuenta",
+  "settings.delete.confirm.title": "¿Estás seguro de que deseas eliminar tu cuenta?",
+  "settings.delete.confirm.description": "Una vez eliminada tu cuenta, todos los datos se eliminarán permanentemente. Introduce tu contraseña para confirmar.",
+
+  "settings.2fa.title": "Autenticación en dos pasos",
+  "settings.2fa.subtitle": "Administra la configuración de autenticación en dos pasos",
+  "settings.2fa.enabled": "Activada",
+  "settings.2fa.disabled": "Desactivada",
+  "settings.2fa.enabled_description": "Con la autenticación en dos pasos activada, se te pedirá un código seguro durante el inicio de sesión.",
+  "settings.2fa.disabled_description": "Al activar la autenticación en dos pasos, se te pedirá un código seguro durante el inicio de sesión.",
+  "settings.2fa.enable": "Activar 2FA",
+  "settings.2fa.disable": "Desactivar 2FA",
+  "settings.2fa.otp": "Código OTP",
+  "settings.2fa.manual": "o introduce el código manualmente",
+
+  "profile.menu.profile": "Perfil",
+  "profile.menu.password": "Contraseña",
+  "profile.menu.two_factor": "Autenticación en dos pasos",
+  "profile.menu.appearance": "Apariencia"
+}
