@@ -45,6 +45,10 @@ use App\Livewire\Entries\EntryIndex;
 |--------------------------------------------------------------------------
 */
 Route::get('/', function () {
+    if (auth()->check()) {
+        return redirect()->route('dashboard');
+    }
+
     return view('welcome');
 })->name('home');
 

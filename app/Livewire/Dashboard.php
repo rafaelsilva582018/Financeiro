@@ -26,6 +26,9 @@ class Dashboard extends Component
     {
         $this->month = now()->format('Y-m');
         $this->loadDashboard();
+
+        // 🔥 força re-renderização dos gráficos ao entrar no dashboard
+        $this->dispatch('charts:reload');
     }
 
     public function updatedMonth(): void

@@ -118,7 +118,10 @@
     <div class="rounded border p-4 bg-white dark:bg-zinc-900">
         <h2 class="text-lg font-semibold mb-4">Receitas x Despesas — Ano</h2>
 
-        <div id="chart-yearly" wire:ignore></div>
+        <div wire:ignore wire:key="dashboard-yearly">
+            <div id="chart-yearly"></div>
+        </div>
+
     </div>
 
     {{-- Gráficos --}}
@@ -127,180 +130,245 @@
         <div class="rounded border p-4 bg-white dark:bg-zinc-900">
             <h2 class="text-lg font-semibold mb-4">Receitas x Despesas</h2>
 
-            <div id="chart-balance" wire:ignore></div>
+            <div wire:ignore wire:key="dashboard-balance">
+                <div id="chart-balance"></div>
+            </div>
+
         </div>
 
         {{-- Despesas por categoria --}}
         <div class="rounded border p-4 bg-white dark:bg-zinc-900">
             <h2 class="text-lg font-semibold mb-4">Despesas por categoria</h2>
 
-            <div id="chart-categories" wire:ignore></div>
+            <div wire:ignore wire:key="dashboard-categories">
+                <div id="chart-categories"></div>
+            </div>
+
         </div>
     </div>
 
     {{-- Scripts dos gráficos --}}
     <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            const isDark = () => document.documentElement.classList.contains("dark");
+document.addEventListener("livewire:init", () => {
 
-            const themeColors = () => ({
-                text: isDark() ? "#e5e7eb" : "#374151", // texto
-                grid: isDark() ? "#3f3f46" : "#e5e7eb", // linhas
-                tooltipBg: isDark() ? "#18181b" : "#ffffff",
-            });
+    /* =====================================================
+     * ⚙️ HELPERS
+     * ===================================================== */
+    const isDark = () =>
+        document.documentElement.classList.contains("dark");
 
-            /* =====================================================
-             * 📊 GRÁFICO ANUAL — Receitas x Despesas
-             * ===================================================== */
-            const yearlyChart = new ApexCharts(document.querySelector("#chart-yearly"), {
-                chart: {
-                    type: "bar",
-                    height: 350,
-                    toolbar: { show: false },
-                    foreColor: themeColors().text,
-                },
-                series: [],
-                colors: ["#16a34a", "#dc2626"],
-                plotOptions: {
-                    bar: {
-                        columnWidth: "45%",
-                    },
-                },
-                dataLabels: { enabled: false },
-                xaxis: {
-                    categories: ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"],
-                    labels: {
-                        style: {
-                            colors: themeColors().text,
-                        },
-                    },
-                },
-                yaxis: {
-                    labels: {
-                        style: {
-                            colors: themeColors().text,
-                        },
-                    },
-                },
-                grid: {
-                    borderColor: themeColors().grid,
-                },
-                tooltip: {
-                    theme: isDark() ? "dark" : "light",
-                },
-                legend: {
-                    position: "top",
-                    labels: {
-                        colors: themeColors().text,
-                    },
-                },
-            });
+    const themeColors = () => ({
+        text: isDark() ? "#e5e7eb" : "#374151",
+        grid: isDark() ? "#3f3f46" : "#e5e7eb",
+    });
 
-            yearlyChart.render();
+    /* =====================================================
+     * 📦 ESTADO (dados persistidos)
+     * ===================================================== */
+    window.__dashboardMonthlyData = null;
+    window.__dashboardYearlyData = null;
 
-            /* =====================================================
-             * 📊 GRÁFICO MENSAL — Receitas x Despesas
-             * ===================================================== */
-            const balanceChart = new ApexCharts(document.querySelector("#chart-balance"), {
-                chart: {
-                    type: "bar",
-                    height: 300,
-                    foreColor: themeColors().text,
-                },
-                series: [],
-                colors: ["#16a34a", "#dc2626"],
-                xaxis: {
-                    categories: ["Resumo"],
-                    labels: {
-                        style: {
-                            colors: themeColors().text,
-                        },
-                    },
-                },
-                yaxis: {
-                    labels: {
-                        style: {
-                            colors: themeColors().text,
-                        },
-                    },
-                },
-                grid: {
-                    borderColor: themeColors().grid,
-                },
-                tooltip: {
-                    theme: isDark() ? "dark" : "light",
-                },
-                dataLabels: { enabled: false },
-            });
+    /* =====================================================
+     * 📊 INSTÂNCIAS
+     * ===================================================== */
+    let yearlyChart = null;
+    let balanceChart = null;
+    let categoryChart = null;
 
-            balanceChart.render();
+    /* =====================================================
+     * 🧱 CRIAÇÃO DOS GRÁFICOS
+     * ===================================================== */
+    function createYearlyChart() {
+        const el = document.querySelector("#chart-yearly");
+        if (!el) return;
 
-            /* =====================================================
-             * 🥧 GRÁFICO — Despesas por categoria
-             * ===================================================== */
-            const categoryChart = new ApexCharts(document.querySelector("#chart-categories"), {
-                chart: {
-                    type: "donut",
-                    height: 300,
-                    foreColor: themeColors().text,
-                },
-                series: [],
-                labels: [],
-                legend: {
-                    position: "bottom",
-                    labels: {
-                        colors: themeColors().text,
-                    },
-                },
-                tooltip: {
-                    theme: isDark() ? "dark" : "light",
-                },
-            });
-
-            categoryChart.render();
-
-            /* =====================================================
-             * 🔄 EVENTOS LIVEWIRE
-             * ===================================================== */
-            window.addEventListener("charts:update", (event) => {
-                const data = event.detail[0];
-
-                balanceChart.updateSeries([
-                    { name: "Receitas", data: [data.income] },
-                    { name: "Despesas", data: [data.expenses] },
-                ]);
-
-                categoryChart.updateOptions({
-                    labels: data.categories.labels,
-                });
-
-                categoryChart.updateSeries(data.categories.values);
-            });
-
-            window.addEventListener("charts:yearly", (event) => {
-                const data = event.detail[0];
-
-                yearlyChart.updateSeries([
-                    { name: "Receitas", data: data.income },
-                    { name: "Despesas", data: data.expenses },
-                ]);
-            });
-
-            /* =====================================================
-             * 🌗 ATUALIZAR GRÁFICOS AO TROCAR TEMA
-             * ===================================================== */
-            const observer = new MutationObserver(() => {
-                yearlyChart.updateOptions({ chart: { foreColor: themeColors().text } });
-                balanceChart.updateOptions({ chart: { foreColor: themeColors().text } });
-                categoryChart.updateOptions({ chart: { foreColor: themeColors().text } });
-            });
-
-            observer.observe(document.documentElement, {
-                attributes: true,
-                attributeFilter: ["class"],
-            });
+        yearlyChart = new ApexCharts(el, {
+            chart: {
+                type: "bar",
+                height: 350,
+                toolbar: { show: false },
+                foreColor: themeColors().text,
+            },
+            series: [],
+            colors: ["#16a34a", "#dc2626"],
+            xaxis: {
+                categories: [
+                    "Jan","Fev","Mar","Abr","Mai","Jun",
+                    "Jul","Ago","Set","Out","Nov","Dez"
+                ],
+            },
+            grid: {
+                borderColor: themeColors().grid,
+            },
+            tooltip: {
+                theme: isDark() ? "dark" : "light",
+            },
         });
-    </script>
+
+        yearlyChart.render();
+    }
+
+    function createBalanceChart() {
+        const el = document.querySelector("#chart-balance");
+        if (!el) return;
+
+        balanceChart = new ApexCharts(el, {
+            chart: {
+                type: "bar",
+                height: 300,
+                foreColor: themeColors().text,
+            },
+            series: [],
+            colors: ["#16a34a", "#dc2626"],
+            xaxis: {
+                categories: ["Resumo"],
+            },
+            grid: {
+                borderColor: themeColors().grid,
+            },
+            tooltip: {
+                theme: isDark() ? "dark" : "light",
+            },
+        });
+
+        balanceChart.render();
+    }
+
+    function createCategoryChart() {
+        const el = document.querySelector("#chart-categories");
+        if (!el) return;
+
+        categoryChart = new ApexCharts(el, {
+            chart: {
+                type: "donut",
+                height: 300,
+                foreColor: themeColors().text,
+            },
+            series: [],
+            labels: [],
+            legend: {
+                position: "bottom",
+            },
+            tooltip: {
+                theme: isDark() ? "dark" : "light",
+            },
+        });
+
+        categoryChart.render();
+    }
+
+    /* =====================================================
+     * 🔁 DESTRUIR + RECRIAR
+     * ===================================================== */
+    function recreateCharts() {
+        if (yearlyChart?.destroy) yearlyChart.destroy();
+        if (balanceChart?.destroy) balanceChart.destroy();
+        if (categoryChart?.destroy) categoryChart.destroy();
+
+        yearlyChart = null;
+        balanceChart = null;
+        categoryChart = null;
+
+        createYearlyChart();
+        createBalanceChart();
+        createCategoryChart();
+
+        // 🔥 reaplicar dados salvos
+        applyStoredData();
+    }
+
+    /* =====================================================
+     * 📊 APLICAR DADOS SALVOS
+     * ===================================================== */
+    function applyStoredData() {
+        if (window.__dashboardMonthlyData && balanceChart && categoryChart) {
+            const data = window.__dashboardMonthlyData;
+
+            balanceChart.updateSeries([
+                { name: "Receitas", data: [data.income] },
+                { name: "Despesas", data: [data.expenses] },
+            ]);
+
+            categoryChart.updateOptions({
+                labels: data.categories.labels,
+            });
+
+            categoryChart.updateSeries(data.categories.values);
+        }
+
+        if (window.__dashboardYearlyData && yearlyChart) {
+            const data = window.__dashboardYearlyData;
+
+            yearlyChart.updateSeries([
+                { name: "Receitas", data: data.income },
+                { name: "Despesas", data: data.expenses },
+            ]);
+        }
+    }
+
+    /* =====================================================
+     * 🔥 EVENTO AO ENTRAR / VOLTAR NO DASHBOARD
+     * ===================================================== */
+    window.addEventListener("charts:reload", () => {
+        // aguarda o Livewire montar o DOM
+        setTimeout(() => {
+            recreateCharts();
+        }, 0);
+    });
+
+    /* =====================================================
+     * 📩 EVENTOS DE DADOS (LIVEWIRE)
+     * ===================================================== */
+    window.addEventListener("charts:update", (event) => {
+        const data = event.detail[0];
+
+        // 💾 salva estado
+        window.__dashboardMonthlyData = data;
+
+        applyStoredData();
+    });
+
+    window.addEventListener("charts:yearly", (event) => {
+        const data = event.detail[0];
+
+        // 💾 salva estado
+        window.__dashboardYearlyData = data;
+
+        applyStoredData();
+    });
+
+    /* =====================================================
+     * 🌗 OBSERVAR TROCA DE TEMA (SEGURO)
+     * ===================================================== */
+    const observer = new MutationObserver(() => {
+        if (yearlyChart) {
+            yearlyChart.updateOptions({
+                chart: { foreColor: themeColors().text },
+            });
+        }
+
+        if (balanceChart) {
+            balanceChart.updateOptions({
+                chart: { foreColor: themeColors().text },
+            });
+        }
+
+        if (categoryChart) {
+            categoryChart.updateOptions({
+                chart: { foreColor: themeColors().text },
+            });
+        }
+    });
+
+    observer.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ["class"],
+    });
+
+});
+</script>
+
+
 
     {{-- Cartões de crédito --}} @if (count($cards))
     <div class="rounded-xl border bg-white dark:bg-zinc-900 p-5 shadow-sm">
