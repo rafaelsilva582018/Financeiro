@@ -15,7 +15,7 @@ class CreateTransactionService
      */
     public function execute(array $data): Transaction
     {
-        // ✅ VALIDAÇÕES DE NEGÓCIO
+        // ✅ Validações de negócio
         $this->validateFixedExpense($data);
 
         return DB::transaction(function () use ($data) {
@@ -26,7 +26,7 @@ class CreateTransactionService
                 'description'    => $data['description'],
                 'total_value'    => $data['total_value'],
                 'start_date'     => $data['start_date'],
-                'is_fixed'       => $data['is_fixed'] ?? false,
+                'is_fixed'       => (bool) ($data['is_fixed'] ?? false),
                 'installments'   => $data['installments'] ?? null,
                 'account_id'     => $data['account_id'] ?? null,
                 'credit_card_id' => $data['credit_card_id'] ?? null,
@@ -36,6 +36,8 @@ class CreateTransactionService
             // 🔁 Geração dos lançamentos
             if ($transaction->credit_card_id) {
                 $this->generateCreditCardEntries($transaction);
+            } elseif ($transaction->is_fixed) {
+                $this->generateFixedEntries($transaction);
             } else {
                 $this->generateCashEntries($transaction);
             }
@@ -71,7 +73,29 @@ class CreateTransactionService
      ===================================================== */
 
     /**
-     * À vista ou receita
+     * 🔁 Despesa / Receita fixa (mensal)
+     */
+    private function generateFixedEntries(Transaction $transaction): void
+    {
+        $start = Carbon::parse($transaction->start_date)
+            ->startOfMonth();
+
+        $months = 12; // Pode virar config ou end_date depois
+
+        for ($i = 0; $i < $months; $i++) {
+            Entry::create([
+                'user_id'         => $transaction->user_id,
+                'transaction_id' => $transaction->id,
+                'reference_date' => $start->copy()->addMonths($i),
+                'value'           => $transaction->total_value,
+                'status'          => 'pending',
+                'account_id'      => $transaction->account_id,
+            ]);
+        }
+    }
+
+    /**
+     * 💰 À vista (conta bancária) ou receita simples
      */
     private function generateCashEntries(Transaction $transaction): void
     {
@@ -88,7 +112,7 @@ class CreateTransactionService
     }
 
     /**
-     * Parcelado no cartão
+     * 💳 Parcelado no cartão de crédito
      */
     private function generateCreditCardEntries(
         Transaction $transaction
@@ -125,7 +149,7 @@ class CreateTransactionService
     }
 
     /**
-     * Define em qual fatura a compra entra
+     * 📅 Define em qual fatura a compra entra
      */
     private function calculateFirstInvoiceMonth(
         Carbon $purchaseDate,
