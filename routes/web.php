@@ -135,11 +135,15 @@ Route::middleware(['auth'])->group(function () {
     | Operações
     |--------------------------------------------------------------------------
     */
+
     Route::get('/transactions', TransactionIndex::class)
         ->name('transactions.index');
 
     Route::get('/transactions/create', TransactionForm::class)
         ->name('transactions.create');
+
+    Route::get('/transactions/{transaction}/edit', TransactionForm::class)
+        ->name('transactions.edit');
 
     Route::get('/entries', EntryIndex::class)
         ->name('entries.index');

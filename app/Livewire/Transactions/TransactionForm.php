@@ -6,10 +6,13 @@ use Livewire\Component;
 use App\Models\Category;
 use App\Models\Account;
 use App\Models\CreditCard;
+use App\Models\Transaction;
 use App\Services\CreateTransactionService;
 
 class TransactionForm extends Component
 {
+    public ?Transaction $transaction = null;
+
     public string $type = '';
     public string $description = '';
     public float $total_value = 0;
@@ -21,6 +24,34 @@ class TransactionForm extends Component
     public ?int $credit_card_id = null;
     public ?int $category_id = null;
 
+    /*
+    |--------------------------------------------------------------------------
+    | MOUNT (CARREGA DADOS SE FOR EDIÇÃO)
+    |--------------------------------------------------------------------------
+    */
+    public function mount(Transaction $transaction = null)
+    {
+        if ($transaction && $transaction->user_id === auth()->id()) {
+
+            $this->transaction = $transaction;
+
+            $this->type = $transaction->type;
+            $this->description = $transaction->description;
+            $this->total_value = $transaction->total_value;
+            $this->start_date = $transaction->start_date->format('Y-m-d');
+            $this->is_fixed = $transaction->is_fixed;
+            $this->installments = $transaction->installments;
+            $this->account_id = $transaction->account_id;
+            $this->credit_card_id = $transaction->credit_card_id;
+            $this->category_id = $transaction->category_id;
+        }
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | REGRAS
+    |--------------------------------------------------------------------------
+    */
     protected function rules(): array
     {
         return [
@@ -38,27 +69,35 @@ class TransactionForm extends Component
         ];
     }
 
-    public function save(CreateTransactionService $service): void
+    /*
+    |--------------------------------------------------------------------------
+    | SAVE (CRIA OU ATUALIZA)
+    |--------------------------------------------------------------------------
+    */
+    public function save(CreateTransactionService $service)
     {
         $data = $this->validate();
 
-        $service->execute($data);
+        if ($this->transaction) {
+            // ✏️ UPDATE
+            $this->transaction->update($data);
 
-        // ✅ Mensagem traduzida (única mudança)
-        session()->flash('success', __('transaction.created'));
+            session()->flash('success', 'Transação atualizada com sucesso.');
+        } else {
+            // ➕ CREATE
+            $service->execute($data);
 
-        $this->reset([
-            'description',
-            'total_value',
-            'start_date',
-            'is_fixed',
-            'installments',
-            'account_id',
-            'credit_card_id',
-            'category_id',
-        ]);
+            session()->flash('success', __('transaction.created'));
+        }
+
+        return redirect()->route('transactions.index');
     }
 
+    /*
+    |--------------------------------------------------------------------------
+    | RENDER
+    |--------------------------------------------------------------------------
+    */
     public function render()
     {
         return view('livewire.transactions.transaction-form', [
