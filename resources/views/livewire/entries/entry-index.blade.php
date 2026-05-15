@@ -1,20 +1,14 @@
 <div
-    class="rounded-xl border
-           bg-white dark:bg-zinc-900
-           p-6 shadow-sm"
+    class="rounded-xl border bg-white dark:bg-zinc-900 p-6 shadow-sm"
 >
     {{-- Header --}}
     <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-6">
-        <h1 class="text-2xl font-bold">
-            Lançamentos
-        </h1>
+        <h1 class="text-2xl font-bold">Lançamentos</h1>
 
         <input
             type="month"
             wire:model.live="month"
-            class="rounded-lg border p-2
-                   bg-white dark:bg-zinc-900
-                   focus:ring-2 focus:ring-indigo-500"
+            class="rounded-lg border p-2 bg-white dark:bg-zinc-900 focus:ring-2 focus:ring-indigo-500"
         >
     </div>
 
@@ -22,30 +16,12 @@
     <div
         wire:loading.delay
         wire:target="month"
-        class="mb-4 flex items-center gap-2
-               text-sm text-gray-500 dark:text-gray-400"
+        class="mb-4 flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400"
     >
-        <svg
-            class="h-4 w-4 animate-spin"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-        >
-            <circle
-                class="opacity-25"
-                cx="12"
-                cy="12"
-                r="10"
-                stroke="currentColor"
-                stroke-width="4"
-            />
-            <path
-                class="opacity-75"
-                fill="currentColor"
-                d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
-            />
+        <svg class="h-4 w-4 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"/>
         </svg>
-
         Carregando lançamentos…
     </div>
 
@@ -68,35 +44,43 @@
 
             <tbody class="divide-y dark:divide-zinc-800">
                 @forelse ($entries as $entry)
-                    <tr
-                        class="hover:bg-gray-50 dark:hover:bg-zinc-800 transition"
-                    >
+
+                    @php
+                        $transaction = $entry->transaction;
+                        $type = $transaction?->type;
+                    @endphp
+
+                    <tr class="hover:bg-gray-50 dark:hover:bg-zinc-800 transition">
+
                         {{-- Descrição --}}
                         <td class="py-3 font-medium">
-                            {{ $entry->transaction->description }}
+                            {{ $transaction?->description ?? 'Transação removida' }}
                         </td>
 
                         {{-- Tipo --}}
                         <td class="py-3">
-                            <span
-                                class="inline-flex rounded-full px-2 py-0.5
-                                       text-xs font-medium
-                                       {{ $entry->transaction->type === 'income'
-                                            ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300'
-                                            : 'bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-300' }}"
-                            >
-                                {{ $entry->transaction->type === 'income'
-                                    ? 'Receita'
-                                    : 'Despesa' }}
-                            </span>
+                            @if($type)
+                                <span
+                                    class="inline-flex rounded-full px-2 py-0.5 text-xs font-medium
+                                    {{ $type === 'income'
+                                        ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300'
+                                        : 'bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-300' }}"
+                                >
+                                    {{ $type === 'income' ? 'Receita' : 'Despesa' }}
+                                </span>
+                            @else
+                                <span class="text-xs text-gray-400 italic">Sem transação</span>
+                            @endif
                         </td>
 
                         {{-- Valor --}}
                         <td
                             class="py-3 text-right font-semibold
-                                   {{ $entry->transaction->type === 'income'
-                                        ? 'text-emerald-600 dark:text-emerald-400'
-                                        : 'text-rose-600 dark:text-rose-400' }}"
+                            {{ $type === 'income'
+                                ? 'text-emerald-600 dark:text-emerald-400'
+                                : ($type === 'expense'
+                                    ? 'text-rose-600 dark:text-rose-400'
+                                    : 'text-gray-500') }}"
                         >
                             R$ {{ number_format($entry->value, 2, ',', '.') }}
                         </td>
@@ -104,15 +88,12 @@
                         {{-- Status --}}
                         <td class="py-3 text-center">
                             <span
-                                class="inline-flex rounded-full px-2 py-0.5
-                                       text-xs font-medium
-                                       {{ $entry->status === 'paid'
-                                            ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300'
-                                            : 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/40 dark:text-yellow-300' }}"
-                            >
+                                class="inline-flex rounded-full px-2 py-0.5 text-xs font-medium
                                 {{ $entry->status === 'paid'
-                                    ? 'Pago'
-                                    : 'Pendente' }}
+                                    ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300'
+                                    : 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/40 dark:text-yellow-300' }}"
+                            >
+                                {{ $entry->status === 'paid' ? 'Pago' : 'Pendente' }}
                             </span>
                         </td>
 
@@ -121,15 +102,12 @@
                             <button
                                 wire:click="toggleStatus({{ $entry->id }})"
                                 wire:loading.attr="disabled"
-                                wire:target="month"
-                                class="text-sm font-medium
-                                       text-indigo-600 hover:underline
-                                       disabled:opacity-50
-                                       disabled:cursor-not-allowed"
+                                class="text-sm font-medium text-indigo-600 hover:underline disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                                 Alternar
                             </button>
                         </td>
+
                     </tr>
                 @empty
                     <tr>

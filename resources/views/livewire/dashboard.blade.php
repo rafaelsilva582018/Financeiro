@@ -593,38 +593,46 @@ document.addEventListener("livewire:init", () => {
                     <tbody class="divide-y dark:divide-zinc-800">
                         @forelse ($entries as $entry)
                         <tr class="hover:bg-gray-50 dark:hover:bg-zinc-800 transition">
-                            {{-- Descrição --}}
-                            <td class="py-3">
-                                <p class="font-medium">{{ $entry->transaction->description }}</p>
-                            </td>
+                    @php
+                        $transaction = $entry->transaction;
+                        $type = $transaction?->type;
+                    @endphp
 
-                            {{-- Tipo --}}
-                            <td class="py-3">
-                                <span
-                                    class="inline-flex items-center gap-1
-                                       rounded-full px-2 py-0.5 text-xs font-medium
-                                       {{ $entry->transaction->type === 'income'
-                                            ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300'
-                                            : 'bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-300' }}"
-                                >
-                                    {{ $entry->transaction->type === 'income' ? 'Receita' : 'Despesa' }}
-                                </span>
-                            </td>
+                    {{-- Descrição --}}
+                    <td class="py-3">
+                        <p class="font-medium">
+                            {{ $transaction?->description ?? 'Transação removida' }}
+                        </p>
+                    </td>
 
-                            {{-- Mês --}}
-                            <td class="py-3 text-gray-500 dark:text-gray-400">
-                                {{ $entry->reference_date->format('m/Y') }}
-                            </td>
-
-                            {{-- Valor --}}
-                            <td
-                                class="py-3 text-right font-semibold
-                                   {{ $entry->transaction->type === 'income'
-                                        ? 'text-emerald-600 dark:text-emerald-400'
-                                        : 'text-rose-600 dark:text-rose-400' }}"
+                    {{-- Tipo --}}
+                    <td class="py-3">
+                        @if($type)
+                            <span
+                                class="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium
+                                {{ $type === 'income'
+                                    ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300'
+                                    : 'bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-300' }}"
                             >
-                                R$ {{ number_format($entry->value, 2, ',', '.') }}
-                            </td>
+                                {{ $type === 'income' ? 'Receita' : 'Despesa' }}
+                            </span>
+                        @else
+                            <span class="text-xs text-gray-400 italic">Sem transação</span>
+                        @endif
+                    </td>
+
+                    {{-- Valor --}}
+                    <td
+                        class="py-3 text-right font-semibold
+                        {{ $type === 'income'
+                            ? 'text-emerald-600 dark:text-emerald-400'
+                            : ($type === 'expense'
+                                ? 'text-rose-600 dark:text-rose-400'
+                                : 'text-gray-500') }}"
+                    >
+                        R$ {{ number_format($entry->value, 2, ',', '.') }}
+                    </td>
+
 
                             {{-- Status --}}
                             <td class="py-3 text-right">

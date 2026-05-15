@@ -4,7 +4,6 @@ namespace App\Livewire\Entries;
 
 use Livewire\Component;
 use App\Models\Entry;
-use Carbon\Carbon;
 
 class EntryIndex extends Component
 {
@@ -15,19 +14,28 @@ class EntryIndex extends Component
         $this->month = now()->format('Y-m');
     }
 
+    /*
+    |--------------------------------------------------------------------------
+    | Alternar status
+    |--------------------------------------------------------------------------
+    */
     public function toggleStatus(int $id): void
     {
         $entry = Entry::where('id', $id)
             ->where('user_id', auth()->id())
+            ->whereHas('transaction') // 🔒 garante que não é órfã
             ->firstOrFail();
 
         $entry->update([
-            'status' => $entry->status === 'paid'
-                ? 'pending'
-                : 'paid',
+            'status' => $entry->status === 'paid' ? 'pending' : 'paid',
         ]);
     }
 
+    /*
+    |--------------------------------------------------------------------------
+    | Lista de lançamentos do mês
+    |--------------------------------------------------------------------------
+    */
     public function getEntriesProperty()
     {
         [$year, $month] = explode('-', $this->month);
@@ -35,11 +43,20 @@ class EntryIndex extends Component
         return Entry::where('user_id', auth()->id())
             ->whereYear('reference_date', $year)
             ->whereMonth('reference_date', $month)
+
+            ->whereHas('transaction')   // 🔥 remove órfãos
+            ->with('transaction')       // 🚀 evita N+1 query
+
             ->orderBy('reference_date')
             ->orderBy('status')
             ->get();
     }
 
+    /*
+    |--------------------------------------------------------------------------
+    | Render
+    |--------------------------------------------------------------------------
+    */
     public function render()
     {
         return view('livewire.entries.entry-index', [

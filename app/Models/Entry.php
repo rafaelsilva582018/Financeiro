@@ -18,16 +18,27 @@ class Entry extends Model
 
     protected $casts = [
         'reference_date' => 'date',
+        'value' => 'decimal:2',
     ];
+
+    /*
+    |--------------------------------------------------------------------------
+    | RELATIONSHIPS
+    |--------------------------------------------------------------------------
+    */
 
     public function user()
     {
         return $this->belongsTo(User::class);
     }
 
+    // 🔒 Protegido contra transações deletadas
     public function transaction()
     {
-        return $this->belongsTo(Transaction::class);
+        return $this->belongsTo(Transaction::class)->withDefault([
+            'description' => 'Transação removida',
+            'type' => null,
+        ]);
     }
 
     public function account()
@@ -39,8 +50,25 @@ class Entry extends Model
     {
         return $this->belongsTo(CreditCard::class);
     }
-    public function category()
+
+    /*
+    |--------------------------------------------------------------------------
+    | HELPERS
+    |--------------------------------------------------------------------------
+    */
+
+    public function isPaid(): bool
     {
-        return $this->belongsTo(Category::class);
+        return $this->status === 'paid';
+    }
+
+    public function isPending(): bool
+    {
+        return $this->status === 'pending';
+    }
+
+    public function formattedValue(): string
+    {
+        return 'R$ ' . number_format($this->value, 2, ',', '.');
     }
 }
