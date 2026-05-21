@@ -38,6 +38,8 @@ use App\Livewire\Transactions\TransactionIndex;
 use App\Livewire\Transactions\TransactionForm;
 
 use App\Livewire\Entries\EntryIndex;
+use App\Livewire\Reports\ExpenseReport;
+use App\Livewire\Reports\IncomeReport;
 
 /*
 |--------------------------------------------------------------------------
@@ -147,4 +149,10 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/entries', EntryIndex::class)
         ->name('entries.index');
+
+    Route::get('/reports/receitas', IncomeReport::class)
+        ->name('reports.income');
+
+    Route::get('/reports/despesas', ExpenseReport::class)
+        ->name('reports.expenses');
 });

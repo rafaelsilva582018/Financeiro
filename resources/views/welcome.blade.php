@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Financeiro — Controle financeiro inteligente</title>
+    <title>Finance Online — Controle financeiro inteligente</title>
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description"
@@ -35,7 +35,7 @@
 
         {{-- LOGO --}}
         <div class="flex items-center gap-2 text-indigo-600 dark:text-indigo-400 font-bold text-lg">
-            💰 Financeiro
+            Finance Online
         </div>
 
         <div class="flex items-center gap-4">
@@ -192,7 +192,7 @@
                 text-sm text-gray-500 dark:text-gray-400">
 
         <span>
-            © {{ date('Y') }} Financeiro. Todos os direitos reservados.
+            © {{ date('Y') }} Finance Online. Todos os direitos reservados.
         </span>
 
         <div class="flex gap-4">

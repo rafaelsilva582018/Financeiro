@@ -1,104 +1,89 @@
-<div
-    class="max-w-xl mx-auto
-           rounded-xl border
-           bg-white dark:bg-zinc-900
-           p-6 shadow-sm space-y-6"
->
-
-    {{-- Cabeçalho --}}
-    <div>
-        <h1 class="text-2xl font-bold">
-            {{ $creditCard ? 'Editar cartão' : 'Novo cartão' }}
-        </h1>
-        <p class="text-sm text-gray-500 dark:text-gray-400">
-            Informe os dados do cartão de crédito
-        </p>
-    </div>
-
-    <form wire:submit.prevent="save" class="space-y-6">
-
-        {{-- Nome --}}
+<div class="space-y-5">
+    @if (! $modal)
         <div>
-            <label class="text-sm font-medium">
-                Nome
-            </label>
+            <h1 class="text-2xl font-semibold text-zinc-950 dark:text-white">{{ $creditCard ? 'Editar cartão' : 'Novo cartão' }}</h1>
+            <p class="mt-1 text-sm text-zinc-500 dark:text-zinc-400">Informe limite, fechamento e vencimento da fatura.</p>
+        </div>
+    @endif
+
+    <form wire:submit.prevent="save" class="space-y-5">
+        <div>
+            <label class="text-sm font-medium text-zinc-700 dark:text-zinc-300">Nome</label>
             <input
                 type="text"
                 wire:model.defer="name"
-                placeholder="Ex: Nubank, Itaú, Inter…"
-                class="mt-1 w-full rounded-lg border p-2.5
-                       bg-white dark:bg-zinc-900"
-            >
+                placeholder="Ex: Nubank, Itaú, Inter..."
+                class="mt-1 h-11 w-full rounded-lg border border-zinc-200 bg-white px-3 text-sm outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 dark:border-zinc-800 dark:bg-zinc-950 dark:text-white"
+            />
+            @error('name') <p class="mt-1 text-sm text-rose-600">{{ $message }}</p> @enderror
         </div>
 
-        {{-- Limite --}}
-        <div>
-            <label class="text-sm font-medium">
-                Limite
-            </label>
+        <div x-data="moneyInput(@js($limit), (value) => $wire.set('limit', value, false))">
+            <label class="text-sm font-medium text-zinc-700 dark:text-zinc-300">Limite</label>
             <input
-                type="number"
-                step="0.01"
-                wire:model.defer="limit"
-                placeholder="0,00"
-                class="mt-1 w-full rounded-lg border p-2.5
-                       bg-white dark:bg-zinc-900"
-            >
+                type="text"
+                inputmode="numeric"
+                x-model="display"
+                x-on:input="update($event.target.value)"
+                x-on:focus="$event.target.select()"
+                placeholder="R$ 0,00"
+                class="mt-1 h-11 w-full rounded-lg border border-zinc-200 bg-white px-3 text-sm font-semibold outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 dark:border-zinc-800 dark:bg-zinc-950 dark:text-white"
+            />
+            @error('limit') <p class="mt-1 text-sm text-rose-600">{{ $message }}</p> @enderror
         </div>
 
-        {{-- Fechamento / Vencimento --}}
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
-
+        <div class="grid gap-4 sm:grid-cols-2">
             <div>
-                <label class="text-sm font-medium">
-                    Dia de fechamento
-                </label>
+                <label class="text-sm font-medium text-zinc-700 dark:text-zinc-300">Dia de fechamento</label>
                 <input
                     type="number"
                     min="1"
                     max="28"
                     wire:model.defer="closing_day"
-                    class="mt-1 w-full rounded-lg border p-2.5
-                           bg-white dark:bg-zinc-900"
-                >
+                    class="mt-1 h-11 w-full rounded-lg border border-zinc-200 bg-white px-3 text-sm outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 dark:border-zinc-800 dark:bg-zinc-950 dark:text-white"
+                />
+                @error('closing_day') <p class="mt-1 text-sm text-rose-600">{{ $message }}</p> @enderror
             </div>
 
             <div>
-                <label class="text-sm font-medium">
-                    Dia de vencimento
-                </label>
+                <label class="text-sm font-medium text-zinc-700 dark:text-zinc-300">Dia de vencimento</label>
                 <input
                     type="number"
                     min="1"
                     max="28"
                     wire:model.defer="due_day"
-                    class="mt-1 w-full rounded-lg border p-2.5
-                           bg-white dark:bg-zinc-900"
-                >
+                    class="mt-1 h-11 w-full rounded-lg border border-zinc-200 bg-white px-3 text-sm outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 dark:border-zinc-800 dark:bg-zinc-950 dark:text-white"
+                />
+                @error('due_day') <p class="mt-1 text-sm text-rose-600">{{ $message }}</p> @enderror
             </div>
-
         </div>
 
-        {{-- Ações --}}
-        <div class="flex items-center justify-end gap-3 pt-4 border-t dark:border-zinc-800">
-
-            <a
-                href="{{ route('credit-cards.index') }}"
-                class="px-4 py-2 rounded-lg border
-                       hover:bg-gray-50 dark:hover:bg-zinc-800 transition"
-            >
-                Cancelar
-            </a>
-
-            <button
-                type="submit"
-                class="px-5 py-2 rounded-lg
-                       bg-indigo-600 text-white
-                       hover:bg-indigo-500 transition"
-            >
-                Salvar
+        <div class="flex items-center justify-end gap-3 border-t border-zinc-200 pt-5 dark:border-zinc-800">
+            @if (! $modal)
+                <a href="{{ route('credit-cards.index') }}" class="inline-flex h-11 items-center justify-center rounded-lg border border-zinc-200 px-5 text-sm font-semibold text-zinc-700 transition hover:bg-zinc-50 dark:border-zinc-800 dark:text-zinc-200 dark:hover:bg-zinc-900">Cancelar</a>
+            @endif
+            <button type="submit" wire:loading.attr="disabled" class="inline-flex h-11 min-w-32 items-center justify-center rounded-lg bg-indigo-600 px-5 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-500 disabled:opacity-60">
+                <span wire:loading.remove wire:target="save">Salvar</span>
+                <span wire:loading wire:target="save">Salvando...</span>
             </button>
         </div>
-
     </form>
+
+    <script>
+        window.moneyInput ??= (initial, setter) => ({
+            display: '',
+            init() {
+                this.display = this.format(Number(initial) || 0);
+            },
+            format(value) {
+                return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value || 0);
+            },
+            update(value) {
+                const digits = String(value || '').replace(/\D/g, '').replace(/^0+(?=\d)/, '');
+                const amount = Number(digits || 0) / 100;
+                this.display = this.format(amount);
+                setter(amount);
+            }
+        });
+    </script>
 </div>

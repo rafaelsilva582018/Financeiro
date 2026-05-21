@@ -2,11 +2,13 @@
 
 namespace App\Livewire\Accounts;
 
-use Livewire\Component;
 use App\Models\Account;
+use Livewire\Component;
 
 class AccountIndex extends Component
 {
+    protected $listeners = ['account-saved' => '$refresh'];
+
     public function delete(int $id): void
     {
         Account::where('id', $id)

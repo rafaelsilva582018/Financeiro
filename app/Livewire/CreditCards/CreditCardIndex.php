@@ -2,11 +2,13 @@
 
 namespace App\Livewire\CreditCards;
 
-use Livewire\Component;
 use App\Models\CreditCard;
+use Livewire\Component;
 
 class CreditCardIndex extends Component
 {
+    protected $listeners = ['credit-card-saved' => '$refresh'];
+
     public function delete(int $id): void
     {
         CreditCard::where('id', $id)

@@ -45,7 +45,7 @@ class EntryIndex extends Component
             ->whereMonth('reference_date', $month)
 
             ->whereHas('transaction')   // 🔥 remove órfãos
-            ->with('transaction')       // 🚀 evita N+1 query
+            ->with(['transaction.category', 'account', 'creditCard'])       // 🚀 evita N+1 query
 
             ->orderBy('reference_date')
             ->orderBy('status')

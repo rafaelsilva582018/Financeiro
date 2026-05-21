@@ -125,6 +125,7 @@
 
         {{ $slot }}
 
+        @include('components.chart-scripts')
         @fluxScripts
         <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
     </body>

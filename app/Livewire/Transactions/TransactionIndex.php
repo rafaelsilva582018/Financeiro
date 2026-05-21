@@ -2,11 +2,13 @@
 
 namespace App\Livewire\Transactions;
 
-use Livewire\Component;
 use App\Models\Transaction;
+use Livewire\Component;
 
 class TransactionIndex extends Component
 {
+    protected $listeners = ['transaction-created' => '$refresh'];
+
     public function delete(int $id): void
     {
         $transaction = Transaction::where('user_id', auth()->id())
@@ -22,6 +24,7 @@ class TransactionIndex extends Component
     {
         return view('livewire.transactions.transaction-index', [
             'transactions' => Transaction::where('user_id', auth()->id())
+                ->with(['category', 'account', 'creditCard'])
                 ->orderByDesc('start_date')
                 ->get(),
         ]);

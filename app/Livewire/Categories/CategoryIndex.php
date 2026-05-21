@@ -2,11 +2,13 @@
 
 namespace App\Livewire\Categories;
 
-use Livewire\Component;
 use App\Models\Category;
+use Livewire\Component;
 
 class CategoryIndex extends Component
 {
+    protected $listeners = ['category-created' => '$refresh'];
+
     public function delete(int $id): void
     {
         Category::where('id', $id)

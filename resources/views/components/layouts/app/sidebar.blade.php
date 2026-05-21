@@ -84,6 +84,24 @@
                     >
                         Lançamentos
                     </flux:navlist.item>
+
+                    <flux:navlist.item
+                        icon="arrow-trending-up"
+                        :href="route('reports.income')"
+                        :current="request()->routeIs('reports.income')"
+                        wire:navigate
+                    >
+                        Receitas
+                    </flux:navlist.item>
+
+                    <flux:navlist.item
+                        icon="arrow-trending-down"
+                        :href="route('reports.expenses')"
+                        :current="request()->routeIs('reports.expenses')"
+                        wire:navigate
+                    >
+                        Despesas
+                    </flux:navlist.item>
                 </flux:navlist.group>
 
             </flux:navlist>
@@ -208,6 +226,7 @@
 
         {{ $slot }}
 
+        @include('components.chart-scripts')
         @fluxScripts
     </body>
 </html>

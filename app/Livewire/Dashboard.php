@@ -2,33 +2,41 @@
 
 namespace App\Livewire;
 
-use Livewire\Component;
-use Carbon\Carbon;
-use App\Models\Entry;
-use App\Models\Transaction;
 use App\Models\CreditCard;
-use App\Services\MonthlySummaryService;
+use App\Models\Entry;
 use App\Services\CreditCardInvoiceService;
+use App\Services\MonthlySummaryService;
+use Carbon\Carbon;
+use Livewire\Component;
 
 class Dashboard extends Component
 {
     public string $month;
 
     public array $summary = [];
+
+    public array $monthlyChart = [];
+
+    public array $yearlyChart = [];
+
+    public array $categoryChart = [];
+
+    public array $cards = [];
+
+    public array $health = [];
+
+    public string $selectedMonthLabel = '';
+
     public $entries = [];
-    public $cards = [];
 
     protected $listeners = [
-        'transaction-created' => '$refresh',
+        'transaction-created' => 'loadDashboard',
     ];
 
     public function mount(): void
     {
         $this->month = now()->format('Y-m');
         $this->loadDashboard();
-
-        // 🔥 força re-renderização dos gráficos ao entrar no dashboard
-        $this->dispatch('charts:reload');
     }
 
     public function updatedMonth(): void
@@ -36,110 +44,65 @@ class Dashboard extends Component
         $this->loadDashboard();
     }
 
-    private function loadDashboard(): void
+    public function loadDashboard(): void
     {
         [$year, $month] = explode('-', $this->month);
-        $reference = Carbon::create($year, $month, 1);
+        $reference = Carbon::create((int) $year, (int) $month, 1);
+        $start = $reference->copy()->startOfMonth();
+        $end = $reference->copy()->endOfMonth();
 
-        /* ===============================
-         * 📅 DADOS ANUAIS
-         * =============================== */
-        $yearlyIncome = [];
-        $yearlyExpenses = [];
+        $this->selectedMonthLabel = $reference->format('m/Y');
 
-        for ($m = 1; $m <= 12; $m++) {
-            $yearlyIncome[] = Entry::where('user_id', auth()->id())
-                ->whereYear('reference_date', $year)
-                ->whereMonth('reference_date', $m)
-                ->where('status', 'paid')
-                ->whereHas('transaction', fn ($q) => $q->where('type', 'income'))
-                ->sum('value');
-
-            $yearlyExpenses[] = Entry::where('user_id', auth()->id())
-                ->whereYear('reference_date', $year)
-                ->whereMonth('reference_date', $m)
-                ->where('status', 'paid')
-                ->whereHas('transaction', fn ($q) => $q->where('type', 'expense'))
-                ->sum('value');
-        }
-
-        /* ===============================
-         * 📊 RESUMO MENSAL
-         * =============================== */
         $this->summary = app(MonthlySummaryService::class)
             ->getSummary(auth()->id(), $reference);
 
-        /* ===============================
-         * 📈 RECEITAS / DESPESAS
-         * =============================== */
-        $income = Entry::where('user_id', auth()->id())
-            ->whereYear('reference_date', $year)
-            ->whereMonth('reference_date', $month)
-            ->where('status', 'paid')
-            ->whereHas('transaction', fn ($q) => $q->where('type', 'income'))
+        $income = (float) ($this->summary['income'] ?? 0);
+        $expenses = (float) ($this->summary['expenses'] ?? 0);
+        $finalBalance = (float) ($this->summary['final_balance'] ?? 0);
+        $totalMovement = $income + $expenses;
+
+        $pendingTotal = (float) Entry::where('user_id', auth()->id())
+            ->whereBetween('reference_date', [$start, $end])
+            ->where('status', 'pending')
             ->sum('value');
 
-        $expenses = Entry::where('user_id', auth()->id())
-            ->whereYear('reference_date', $year)
-            ->whereMonth('reference_date', $month)
+        $paidCount = Entry::where('user_id', auth()->id())
+            ->whereBetween('reference_date', [$start, $end])
             ->where('status', 'paid')
-            ->whereHas('transaction', fn ($q) => $q->where('type', 'expense'))
-            ->sum('value');
+            ->count();
 
-        /* ===============================
-         * 🥧 DESPESAS POR CATEGORIA
-         * =============================== */
-        $expensesByCategory = Transaction::where('user_id', auth()->id())
-            ->where('type', 'expense')
-            ->whereHas('entries', fn ($q) =>
-                $q->whereYear('reference_date', $year)
-                  ->whereMonth('reference_date', $month)
-                  ->where('status', 'paid')
-            )
-            ->with('category')
-            ->get()
-            ->groupBy(fn ($t) => $t->category->name ?? 'Sem categoria')
-            ->map(fn ($items) => $items->sum('total_value'))
-            ->filter();
+        $pendingCount = Entry::where('user_id', auth()->id())
+            ->whereBetween('reference_date', [$start, $end])
+            ->where('status', 'pending')
+            ->count();
 
-        /* ===============================
-         * 📤 DISPATCH GRÁFICOS
-         * =============================== */
-        $this->dispatch('charts:update', [
+        $this->health = [
+            'pending_total' => $pendingTotal,
+            'paid_count' => $paidCount,
+            'pending_count' => $pendingCount,
+            'payment_progress' => ($paidCount + $pendingCount) > 0
+                ? round(($paidCount / ($paidCount + $pendingCount)) * 100)
+                : 0,
+            'expense_ratio' => $income > 0 ? round(($expenses / $income) * 100) : 0,
+            'movement_total' => $totalMovement,
+        ];
+
+        $this->monthlyChart = [
             'income' => $income,
             'expenses' => $expenses,
-            'categories' => [
-                'labels' => $expensesByCategory->keys()->values()->toArray(),
-                'values' => $expensesByCategory->values()->values()->toArray(),
-            ],
+            'balance' => $finalBalance,
+        ];
+
+        $this->yearlyChart = $this->buildYearlyChart((int) $year);
+        $this->categoryChart = $this->buildCategoryChart((int) $year, (int) $month);
+        $this->cards = $this->buildCards($reference);
+        $this->entries = $this->buildLatestEntries($start, $end);
+
+        $this->dispatch('dashboard:charts-updated', [
+            'monthly' => $this->monthlyChart,
+            'yearly' => $this->yearlyChart,
+            'categories' => $this->categoryChart,
         ]);
-
-        $this->dispatch('charts:yearly', [
-            'income' => $yearlyIncome,
-            'expenses' => $yearlyExpenses,
-        ]);
-
-        /* ===============================
-         * 💳 CARTÕES
-         * =============================== */
-        $this->cards = CreditCard::where('user_id', auth()->id())
-            ->get()
-            ->map(fn ($card) =>
-                app(CreditCardInvoiceService::class)
-                    ->getInvoice(auth()->id(), $card->id, $reference)
-            )
-            ->toArray();
-
-        /* ===============================
-         * 🧾 ÚLTIMOS LANÇAMENTOS
-         * =============================== */
-        $this->entries = Entry::with('transaction')
-            ->where('user_id', auth()->id())
-            ->whereYear('reference_date', $year)
-            ->whereMonth('reference_date', $month)
-            ->orderByDesc('reference_date')
-            ->limit(5)
-            ->get();
     }
 
     public function toggleEntryStatus(int $entryId): void
@@ -152,6 +115,77 @@ class Dashboard extends Component
         ]);
 
         $this->loadDashboard();
+    }
+
+    private function buildYearlyChart(int $year): array
+    {
+        $income = [];
+        $expenses = [];
+
+        for ($month = 1; $month <= 12; $month++) {
+            $income[] = (float) Entry::where('user_id', auth()->id())
+                ->whereYear('reference_date', $year)
+                ->whereMonth('reference_date', $month)
+                ->where('status', 'paid')
+                ->whereHas('transaction', fn ($query) => $query->where('type', 'income'))
+                ->sum('value');
+
+            $expenses[] = (float) Entry::where('user_id', auth()->id())
+                ->whereYear('reference_date', $year)
+                ->whereMonth('reference_date', $month)
+                ->where('status', 'paid')
+                ->whereHas('transaction', fn ($query) => $query->where('type', 'expense'))
+                ->sum('value');
+        }
+
+        return [
+            'labels' => ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
+            'income' => $income,
+            'expenses' => $expenses,
+        ];
+    }
+
+    private function buildCategoryChart(int $year, int $month): array
+    {
+        $entries = Entry::with('transaction.category')
+            ->where('user_id', auth()->id())
+            ->whereYear('reference_date', $year)
+            ->whereMonth('reference_date', $month)
+            ->where('status', 'paid')
+            ->whereHas('transaction', fn ($query) => $query->where('type', 'expense'))
+            ->get();
+
+        $grouped = $entries
+            ->groupBy(fn (Entry $entry) => $entry->transaction?->category?->name ?? 'Sem categoria')
+            ->map(fn ($items) => round((float) $items->sum('value'), 2))
+            ->filter(fn (float $value) => $value > 0)
+            ->sortDesc();
+
+        return [
+            'labels' => $grouped->keys()->values()->toArray(),
+            'values' => $grouped->values()->values()->toArray(),
+        ];
+    }
+
+    private function buildCards(Carbon $reference): array
+    {
+        return CreditCard::where('user_id', auth()->id())
+            ->orderBy('name')
+            ->get()
+            ->map(fn ($card) => app(CreditCardInvoiceService::class)
+                ->getInvoice(auth()->id(), $card->id, $reference))
+            ->toArray();
+    }
+
+    private function buildLatestEntries(Carbon $start, Carbon $end)
+    {
+        return Entry::with(['transaction.category', 'account', 'creditCard'])
+            ->where('user_id', auth()->id())
+            ->whereBetween('reference_date', [$start, $end])
+            ->orderByRaw("status = 'pending' desc")
+            ->orderByDesc('reference_date')
+            ->limit(8)
+            ->get();
     }
 
     public function render()
