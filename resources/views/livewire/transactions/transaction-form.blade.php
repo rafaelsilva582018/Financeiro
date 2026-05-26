@@ -123,11 +123,15 @@
                     @endif
                 @endif
 
-                @if ($type)
+                @if ($type && ! $credit_card_id)
                     <label class="md:col-span-2 flex items-center justify-between rounded-lg border border-zinc-200 bg-zinc-50 px-4 py-3 dark:border-zinc-800 dark:bg-zinc-950">
                         <span><span class="block text-sm font-semibold text-zinc-800 dark:text-zinc-100">{{ $type === 'expense' ? 'Despesa fixa' : 'Receita fixa' }}</span><span class="block text-xs text-zinc-500 dark:text-zinc-400">Repete automaticamente nos próximos meses.</span></span>
                         <input type="checkbox" wire:model.defer="is_fixed" class="h-5 w-5 rounded border-zinc-300 text-indigo-600 focus:ring-indigo-500" />
                     </label>
+                @elseif ($credit_card_id)
+                    <div class="md:col-span-2 rounded-lg border border-amber-100 bg-amber-50 px-4 py-3 text-sm text-amber-700 dark:border-amber-900/60 dark:bg-amber-950/40 dark:text-amber-300">
+                        Compra no cartão fica como lançamento da fatura. Para gastos mensais recorrentes, cadastre como despesa fixa em conta bancária.
+                    </div>
                 @endif
             </div>
         </section>
@@ -144,4 +148,3 @@
         </div>
     </form>
 </div>
-

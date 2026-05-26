@@ -67,7 +67,7 @@ class TransactionForm extends Component
             'description' => 'required|string|max:255',
             'total_value' => 'required|numeric|min:0.01',
             'card_value_mode' => 'required|in:total,installment',
-            'installment_value' => 'nullable|required_if:card_value_mode,installment|numeric|min:0.01',
+            'installment_value' => 'exclude_unless:card_value_mode,installment|required|numeric|min:0.01',
             'start_date' => 'required|date',
             'category_id' => 'required|exists:categories,id',
             'account_id' => 'nullable|required_without:credit_card_id|exists:accounts,id',
@@ -111,9 +111,30 @@ class TransactionForm extends Component
 
     public function updatedCreditCardId($value): void
     {
+        if ($value) {
+            $this->account_id = null;
+            $this->is_fixed = false;
+            $this->installments = $this->installments ?: 1;
+
+            return;
+        }
+
         if (! $value) {
             $this->card_value_mode = 'total';
             $this->installment_value = 0;
+            $this->installments = null;
+        }
+    }
+
+    public function updatedType(): void
+    {
+        $this->category_id = null;
+
+        if ($this->type === 'income') {
+            $this->credit_card_id = null;
+            $this->card_value_mode = 'total';
+            $this->installment_value = 0;
+            $this->installments = null;
         }
     }
 
@@ -126,6 +147,12 @@ class TransactionForm extends Component
 
     public function save(CreateTransactionService $service)
     {
+        if ($this->credit_card_id) {
+            $this->account_id = null;
+            $this->is_fixed = false;
+            $this->installments = max((int) ($this->installments ?: 1), 1);
+        }
+
         if ($this->credit_card_id && $this->card_value_mode === 'installment') {
             $this->total_value = round($this->installment_value * max((int) $this->installments, 1), 2);
         }
