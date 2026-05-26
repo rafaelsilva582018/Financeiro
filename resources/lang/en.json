@@ -1,0 +1,121 @@
+{
+  "app.name": "Finance",
+
+  "layout.platform": "Platform",
+  "layout.dashboard": "Dashboard",
+  "layout.settings": "Settings",
+  "layout.logout": "Log out",
+
+  "common.search": "Search",
+  "common.save": "Save",
+  "common.saved": "Saved.",
+  "common.cancel": "Cancel",
+  "common.back": "Back",
+  "common.confirm": "Confirm",
+
+  "auth.fields.name": "Name",
+  "auth.fields.email": "Email address",
+  "auth.fields.password": "Password",
+  "auth.fields.password_confirmation": "Confirm password",
+
+  "auth.placeholders.name": "Full name",
+  "auth.placeholders.email": "email@example.com",
+
+  "auth.login.title": "Log in to your account",
+  "auth.login.description": "Enter your email and password below to log in",
+  "auth.login.button": "Log in",
+  "auth.login.forgot": "Forgot your password?",
+  "auth.login.remember": "Remember me",
+  "auth.login.no_account": "Don’t have an account?",
+  "auth.login.link": "Log in",
+
+  "auth.register.title": "Create an account",
+  "auth.register.description": "Fill in the details below to create your account",
+  "auth.register.button": "Create account",
+  "auth.register.have_account": "Already have an account?",
+  "auth.register.link": "Sign up",
+
+  "auth.forgot.title": "Forgot your password",
+  "auth.forgot.description": "Enter your email to receive a password reset link",
+  "auth.forgot.button": "Send password reset link",
+  "auth.forgot.back_prefix": "Or, return to",
+
+  "auth.reset.title": "Reset password",
+  "auth.reset.description": "Please enter your new password below",
+  "auth.reset.button": "Reset password",
+
+  "auth.confirm.title": "Confirm password",
+  "auth.confirm.description": "This is a secure area of the application. Please confirm your password before continuing.",
+  "auth.confirm.button": "Confirm",
+
+  "auth.verify.message": "Please verify your email address by clicking on the link we just emailed to you.",
+  "auth.verify.sent": "A new verification link has been sent to the email address you provided during registration.",
+  "auth.verify.resend": "Resend verification email",
+
+  "auth.logout": "Log out",
+
+  "auth.2fa.code.title": "Authentication code",
+  "auth.2fa.code.description": "Enter the authentication code provided by your authenticator app.",
+
+  "auth.2fa.recovery.title": "Recovery code",
+  "auth.2fa.recovery.description": "Confirm access to your account by entering one of your recovery codes.",
+
+  "auth.2fa.fields.otp": "OTP code",
+  "auth.2fa.fields.recovery": "Recovery code",
+
+  "auth.2fa.continue": "Continue",
+
+  "auth.2fa.switch.prefix": "or you can",
+  "auth.2fa.switch.to_recovery": "log in using a recovery code",
+  "auth.2fa.switch.to_code": "log in using an authentication code",
+
+  "auth.2fa.recovery_codes.title": "2FA recovery codes",
+  "auth.2fa.recovery_codes.description": "Recovery codes allow you to regain access if you lose your authenticator device. Store them securely in a password manager.",
+  "auth.2fa.recovery_codes.view": "View recovery codes",
+  "auth.2fa.recovery_codes.hide": "Hide recovery codes",
+  "auth.2fa.recovery_codes.regenerate": "Regenerate codes",
+  "auth.2fa.recovery_codes.aria_label": "Recovery codes",
+  "auth.2fa.recovery_codes.note": "Each recovery code can be used once to access your account and will be removed after use. If you need more, click \"Regenerate codes\" above.",
+
+  "settings.title": "Settings",
+  "settings.subtitle": "Manage your profile and account settings",
+
+  "settings.profile.title": "Profile",
+  "settings.profile.subtitle": "Update your name and email address",
+  "settings.profile.email_unverified": "Your email address is unverified.",
+  "settings.profile.resend_verification": "Click here to resend the verification email.",
+  "settings.profile.verification_sent": "A new verification link has been sent to your email address.",
+
+  "settings.password.title": "Update password",
+  "settings.password.subtitle": "Ensure your account is using a long, random password to stay secure",
+  "settings.password.current": "Current password",
+  "settings.password.new": "New password",
+
+  "settings.appearance.title": "Appearance",
+  "settings.appearance.subtitle": "Update the appearance settings for your account",
+  "settings.appearance.light": "Light",
+  "settings.appearance.dark": "Dark",
+  "settings.appearance.system": "System",
+
+  "settings.delete.title": "Delete account",
+  "settings.delete.subtitle": "Delete your account and all of its data",
+  "settings.delete.button": "Delete account",
+  "settings.delete.confirm.title": "Are you sure you want to delete your account?",
+  "settings.delete.confirm.description": "Once your account is deleted, all of its resources and data will be permanently deleted. Please enter your password to confirm.",
+
+  "settings.2fa.title": "Two-factor authentication",
+  "settings.2fa.subtitle": "Manage your two-factor authentication settings",
+  "settings.2fa.enabled": "Enabled",
+  "settings.2fa.disabled": "Disabled",
+  "settings.2fa.enabled_description": "With two-factor authentication enabled, you will be prompted for a secure code during login generated by an authenticator app.",
+  "settings.2fa.disabled_description": "When you enable two-factor authentication, you will be prompted for a secure code during login.",
+  "settings.2fa.enable": "Enable 2FA",
+  "settings.2fa.disable": "Disable 2FA",
+  "settings.2fa.otp": "OTP code",
+  "settings.2fa.manual": "or enter the code manually",
+
+  "profile.menu.profile": "Profile",
+  "profile.menu.password": "Password",
+  "profile.menu.two_factor": "Two-factor authentication",
+  "profile.menu.appearance": "Appearance"
+}

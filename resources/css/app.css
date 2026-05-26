@@ -1,0 +1,119 @@
+@import 'tailwindcss';
+@import '../../vendor/livewire/flux/dist/flux.css';
+
+@source '../views';
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../vendor/livewire/flux-pro/stubs/**/*.blade.php';
+@source '../../vendor/livewire/flux/stubs/**/*.blade.php';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif,
+        'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+
+    --color-zinc-50: #fafafa;
+    --color-zinc-100: #f5f5f5;
+    --color-zinc-200: #e5e5e5;
+    --color-zinc-300: #d4d4d4;
+    --color-zinc-400: #a3a3a3;
+    --color-zinc-500: #737373;
+    --color-zinc-600: #525252;
+    --color-zinc-700: #404040;
+    --color-zinc-800: #262626;
+    --color-zinc-900: #171717;
+    --color-zinc-950: #0a0a0a;
+
+    --color-accent: var(--color-neutral-800);
+    --color-accent-content: var(--color-neutral-800);
+    --color-accent-foreground: var(--color-white);
+}
+
+@layer theme {
+    .dark {
+        --color-accent: var(--color-white);
+        --color-accent-content: var(--color-white);
+        --color-accent-foreground: var(--color-neutral-800);
+    }
+}
+
+@layer base {
+
+    *,
+    ::after,
+    ::before,
+    ::backdrop,
+    ::file-selector-button {
+        border-color: var(--color-gray-200, currentColor);
+    }
+}
+
+@layer components {
+    .finance-logo-mark {
+        @apply relative inline-grid shrink-0 place-items-center overflow-hidden rounded-lg border border-emerald-300/70 bg-zinc-950 font-semibold text-white shadow-sm shadow-emerald-900/10 ring-1 ring-white/10 dark:border-emerald-400/40 dark:bg-white dark:text-zinc-950;
+        letter-spacing: 0;
+    }
+
+    .finance-logo-mark::before {
+        content: '';
+        @apply absolute inset-x-1 top-1 h-1 rounded-full bg-emerald-400;
+    }
+
+    .finance-logo-mark span {
+        @apply relative mt-1 text-[0.62em] leading-none;
+    }
+}
+
+/* =====================================================
+   FLUX
+   ===================================================== */
+[data-flux-field]:not(ui-radio, ui-checkbox) {
+    @apply grid gap-2;
+}
+
+[data-flux-label] {
+    @apply !mb-0 !leading-tight;
+}
+
+input:focus[data-flux-control],
+textarea:focus[data-flux-control],
+select:focus[data-flux-control] {
+    @apply outline-hidden ring-2 ring-accent ring-offset-2 ring-offset-accent-foreground;
+}
+
+/* =====================================================
+   SELECT / OPTION — DARK MODE FIX (GLOBAL)
+   ===================================================== */
+
+/* Select */
+select {
+    background-color: var(--color-white);
+    color: var(--color-zinc-900);
+}
+
+.dark select {
+    background-color: var(--color-zinc-900);
+    color: var(--color-zinc-100);
+    border-color: var(--color-zinc-700);
+}
+
+/* Options (dropdown) */
+select option {
+    background-color: var(--color-white);
+    color: var(--color-zinc-900);
+}
+
+.dark select option {
+    background-color: var(--color-zinc-900);
+    color: var(--color-zinc-100);
+}
+
+/* =====================================================
+   INPUTS / TEXTAREA — CONSISTÊNCIA NO DARK
+   ===================================================== */
+.dark input,
+.dark textarea {
+    background-color: var(--color-zinc-900);
+    color: var(--color-zinc-100);
+    border-color: var(--color-zinc-700);
+}

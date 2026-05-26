@@ -1,0 +1,137 @@
+{
+  "app.name": "Finance Online",
+
+  "layout.platform": "Plataforma",
+  "layout.dashboard": "Painel",
+  "layout.settings": "Configurações",
+  "layout.logout": "Sair",
+
+  "common.search": "Pesquisar",
+  "common.save": "Salvar",
+  "common.saved": "Salvo.",
+  "common.cancel": "Cancelar",
+  "common.back": "Voltar",
+  "common.confirm": "Confirmar",
+
+  "auth.fields.name": "Nome",
+  "auth.fields.email": "Endereço de e-mail",
+  "auth.fields.password": "Senha",
+  "auth.fields.password_confirmation": "Confirmar senha",
+
+  "auth.placeholders.name": "Nome completo",
+  "auth.placeholders.email": "email@exemplo.com",
+
+  "auth.login.title": "Entrar na sua conta",
+  "auth.login.description": "Informe seu e-mail e senha para acessar sua área financeira",
+  "auth.login.button": "Entrar",
+  "auth.login.forgot": "Esqueceu sua senha?",
+  "auth.login.remember": "Lembrar de mim",
+  "auth.login.no_account": "Não tem uma conta?",
+  "auth.login.link": "Entrar",
+
+  "auth.register.title": "Criar uma conta",
+  "auth.register.description": "Crie seu acesso para organizar suas finanças em um só lugar",
+  "auth.register.button": "Criar conta",
+  "auth.register.have_account": "Já tem uma conta?",
+  "auth.register.link": "Cadastre-se",
+
+  "auth.forgot.title": "Esqueci minha senha",
+  "auth.forgot.description": "Informe seu e-mail para receber o link de redefinição de senha",
+  "auth.forgot.button": "Enviar link de redefinição",
+  "auth.forgot.back_prefix": "Ou, volte para",
+
+  "auth.reset.title": "Redefinir senha",
+  "auth.reset.description": "Informe sua nova senha abaixo",
+  "auth.reset.button": "Redefinir senha",
+
+  "auth.confirm.title": "Confirmar senha",
+  "auth.confirm.description": "Esta é uma área segura da aplicação. Confirme sua senha para continuar.",
+  "auth.confirm.button": "Confirmar",
+
+  "auth.verify.message": "Verifique seu endereço de e-mail clicando no link que acabamos de enviar para você.",
+  "auth.verify.sent": "Um novo link de verificação foi enviado para o endereço de e-mail informado durante o cadastro.",
+  "auth.verify.resend": "Reenviar e-mail de verificação",
+
+  "auth.logout": "Sair",
+
+  "auth.2fa.code.title": "Código de autenticação",
+  "auth.2fa.code.description": "Informe o código gerado pelo seu aplicativo autenticador.",
+
+  "auth.2fa.recovery.title": "Código de recuperação",
+  "auth.2fa.recovery.description": "Confirme o acesso à sua conta informando um dos seus códigos de recuperação.",
+
+  "auth.2fa.fields.otp": "Código OTP",
+  "auth.2fa.fields.recovery": "Código de recuperação",
+
+  "auth.2fa.continue": "Continuar",
+
+  "auth.2fa.switch.prefix": "ou você pode",
+  "auth.2fa.switch.to_recovery": "entrar usando um código de recuperação",
+  "auth.2fa.switch.to_code": "entrar usando um código de autenticação",
+
+  "auth.2fa.recovery_codes.title": "Códigos de recuperação do 2FA",
+  "auth.2fa.recovery_codes.description": "Os códigos de recuperação permitem recuperar o acesso caso você perca seu dispositivo de autenticação. Guarde-os em um gerenciador de senhas seguro.",
+  "auth.2fa.recovery_codes.view": "Ver códigos de recuperação",
+  "auth.2fa.recovery_codes.hide": "Ocultar códigos de recuperação",
+  "auth.2fa.recovery_codes.regenerate": "Gerar novos códigos",
+  "auth.2fa.recovery_codes.aria_label": "Códigos de recuperação",
+  "auth.2fa.recovery_codes.note": "Cada código de recuperação pode ser usado uma única vez para acessar sua conta e será removido após o uso. Caso precise de novos códigos, clique em \"Gerar novos códigos\" acima.",
+
+  "settings.title": "Configurações",
+  "settings.subtitle": "Gerencie seu perfil e as configurações da conta",
+
+  "settings.profile.title": "Perfil",
+  "settings.profile.subtitle": "Atualize seu nome e endereço de e-mail",
+  "settings.profile.email_unverified": "Seu endereço de e-mail não foi verificado.",
+  "settings.profile.resend_verification": "Clique aqui para reenviar o e-mail de verificação.",
+  "settings.profile.verification_sent": "Um novo link de verificação foi enviado para o seu e-mail.",
+
+  "settings.password.title": "Atualizar senha",
+  "settings.password.subtitle": "Garanta que sua conta esteja usando uma senha longa e aleatória para manter a segurança",
+  "settings.password.current": "Senha atual",
+  "settings.password.new": "Nova senha",
+
+  "settings.appearance.title": "Aparência",
+  "settings.appearance.subtitle": "Atualize as configurações de aparência da sua conta",
+  "settings.appearance.light": "Claro",
+  "settings.appearance.dark": "Escuro",
+  "settings.appearance.system": "Sistema",
+
+  "settings.delete.title": "Excluir conta",
+  "settings.delete.subtitle": "Exclua sua conta e todos os seus dados",
+  "settings.delete.button": "Excluir conta",
+  "settings.delete.confirm.title": "Tem certeza que deseja excluir sua conta?",
+  "settings.delete.confirm.description": "Após a exclusão da sua conta, todos os seus dados e recursos serão removidos permanentemente. Informe sua senha para confirmar que deseja excluir sua conta definitivamente.",
+
+  "settings.2fa.title": "Autenticação em duas etapas",
+  "settings.2fa.subtitle": "Gerencie as configurações de autenticação em duas etapas",
+  "settings.2fa.enabled": "Ativada",
+  "settings.2fa.disabled": "Desativada",
+  "settings.2fa.enabled_description": "Com a autenticação em duas etapas ativada, será solicitado um código seguro durante o login, gerado por um aplicativo autenticador no seu telefone.",
+  "settings.2fa.disabled_description": "Ao ativar a autenticação em duas etapas, será solicitado um código seguro durante o login, gerado por um aplicativo autenticador.",
+  "settings.2fa.enable": "Ativar 2FA",
+  "settings.2fa.disable": "Desativar 2FA",
+  "settings.2fa.otp": "Código OTP",
+  "settings.2fa.manual": "ou insira o código manualmente",
+
+  "profile.menu.profile": "Perfil",
+  "profile.menu.password": "Senha",
+  "profile.menu.two_factor": "Autenticação em duas etapas",
+  "profile.menu.appearance": "Aparência",
+
+  "validation.required": "O campo :attribute é obrigatório.",
+  "validation.required_without": "O campo :attribute é obrigatório quando :values não está presente.",
+  "validation.required_with": "O campo :attribute é obrigatório quando :values está presente.",
+  "validation.attributes.type": "tipo",
+  "validation.attributes.description": "descrição",
+  "validation.attributes.total_value": "valor",
+  "validation.attributes.start_date": "data",
+  "validation.attributes.category_id": "categoria",
+  "validation.attributes.account_id": "conta bancária",
+  "validation.attributes.credit_card_id": "cartão de crédito",
+  "validation.attributes.installments": "parcelas",
+
+  "auth.failed": "Estas credenciais não correspondem aos nossos registros.",
+  "auth.password": "A senha informada está incorreta.",
+  "auth.throttle": "Muitas tentativas de login. Tente novamente em :seconds segundos."
+}
