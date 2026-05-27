@@ -236,6 +236,7 @@
         {{ $slot }}
 
         @include('components.chart-scripts')
+        @livewireScripts
         @fluxScripts
     </body>
 </html>

@@ -16,7 +16,7 @@ class TransactionForm extends Component
 
     public bool $modal = false;
 
-    public string $type = '';
+    public string $type = 'expense';
 
     public string $description = '';
 
@@ -138,11 +138,31 @@ class TransactionForm extends Component
         }
     }
 
+    public function selectType(string $type): void
+    {
+        if (! in_array($type, ['income', 'expense'], true)) {
+            return;
+        }
+
+        $this->type = $type;
+        $this->updatedType();
+    }
+
     public function updatedCardValueMode(string $value): void
     {
         if ($value === 'total') {
             $this->installment_value = 0;
         }
+    }
+
+    public function selectCardValueMode(string $mode): void
+    {
+        if (! in_array($mode, ['total', 'installment'], true)) {
+            return;
+        }
+
+        $this->card_value_mode = $mode;
+        $this->updatedCardValueMode($mode);
     }
 
     public function save(CreateTransactionService $service)

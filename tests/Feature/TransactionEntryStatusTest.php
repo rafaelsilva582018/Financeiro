@@ -128,6 +128,22 @@ test('transaction form creates credit card purchase using total value', function
         ->and($transaction->entries->pluck('installment_number')->values()->all())->toBe([1, 2, 3]);
 });
 
+test('transaction form selectors update type and card value mode', function () {
+    $user = User::factory()->create();
+    $this->actingAs($user);
+
+    Livewire::test(TransactionForm::class, ['modal' => true])
+        ->assertSet('type', 'expense')
+        ->call('selectType', 'income')
+        ->assertSet('type', 'income')
+        ->call('selectType', 'expense')
+        ->assertSet('type', 'expense')
+        ->call('selectCardValueMode', 'installment')
+        ->assertSet('card_value_mode', 'installment')
+        ->call('selectCardValueMode', 'total')
+        ->assertSet('card_value_mode', 'total');
+});
+
 test('transaction form creates credit card purchase using installment value', function () {
     $user = User::factory()->create();
     $this->actingAs($user);

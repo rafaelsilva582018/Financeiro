@@ -126,6 +126,7 @@
         {{ $slot }}
 
         @include('components.chart-scripts')
+        @livewireScripts
         @fluxScripts
         <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
     </body>

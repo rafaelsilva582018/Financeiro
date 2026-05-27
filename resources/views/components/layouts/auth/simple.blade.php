@@ -47,6 +47,7 @@
             </section>
         </main>
 
+        @livewireScripts
         @fluxScripts
     </body>
 </html>

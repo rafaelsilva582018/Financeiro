@@ -59,7 +59,7 @@
         </div>
 
         <div class="flex justify-start lg:justify-end">
-            <a href="{{ route('transactions.create') }}" wire:navigate class="inline-flex h-12 w-full items-center justify-center rounded-lg bg-indigo-600 px-5 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-500 sm:w-auto sm:min-w-44 gap-2"><x-ui.icon name="plus" class="h-4 w-4" />Nova transação</a>
+            <button type="button" x-on:click="modal = 'transaction'" class="inline-flex h-12 w-full items-center justify-center rounded-lg bg-indigo-600 px-5 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-500 sm:w-auto sm:min-w-44 gap-2"><x-ui.icon name="plus" class="h-4 w-4" />Nova transação</button>
         </div>
     </div>
 
@@ -175,7 +175,7 @@
                 </div>
 
                 <div class="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-1">
-                    <a href="{{ route('transactions.create') }}" wire:navigate class="group rounded-lg border border-zinc-200 p-4 text-left transition hover:border-indigo-300 hover:bg-indigo-50 dark:border-zinc-800 dark:hover:border-indigo-800 dark:hover:bg-indigo-950/30"><p class="font-semibold text-zinc-950 dark:text-white">Registrar transação</p><p class="mt-1 text-sm text-zinc-500 dark:text-zinc-400">Receita, despesa, fixo ou parcelado.</p></a>
+                    <button type="button" x-on:click="modal = 'transaction'" class="group rounded-lg border border-zinc-200 p-4 text-left transition hover:border-indigo-300 hover:bg-indigo-50 dark:border-zinc-800 dark:hover:border-indigo-800 dark:hover:bg-indigo-950/30"><p class="font-semibold text-zinc-950 dark:text-white">Registrar transação</p><p class="mt-1 text-sm text-zinc-500 dark:text-zinc-400">Receita, despesa, fixo ou parcelado.</p></button>
 
                     <a href="{{ route('entries.index') }}" class="group rounded-lg border border-zinc-200 p-4 transition hover:border-indigo-300 hover:bg-indigo-50 dark:border-zinc-800 dark:hover:border-indigo-800 dark:hover:bg-indigo-950/30">
                         <p class="font-semibold text-zinc-950 dark:text-white">Conferir lançamentos</p>
@@ -329,12 +329,12 @@
         <div
             x-show="modal"
             x-transition.scale.origin.center
-            class="relative z-10 flex max-h-[90vh] w-full max-w-2xl flex-col overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-2xl dark:border-zinc-800 dark:bg-zinc-900"
+            class="relative z-10 flex max-h-[90vh] w-full max-w-4xl flex-col overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-2xl dark:border-zinc-800 dark:bg-zinc-900"
         >
             <div class="flex items-start justify-between gap-4 border-b border-zinc-200 px-6 py-4 dark:border-zinc-800">
                 <div>
-                    <h2 class="text-lg font-semibold text-zinc-950 dark:text-white">Nova categoria</h2>
-                    <p class="mt-1 text-sm text-zinc-500 dark:text-zinc-400">Crie uma categoria para organizar seus lançamentos.</p>
+                    <h2 class="text-lg font-semibold text-zinc-950 dark:text-white" x-text="modal === 'transaction' ? 'Nova transação' : 'Nova categoria'"></h2>
+                    <p class="mt-1 text-sm text-zinc-500 dark:text-zinc-400" x-text="modal === 'transaction' ? 'Registre receita, despesa, cartão ou recorrência.' : 'Crie uma categoria para organizar seus lançamentos.'"></p>
                 </div>
                 <button
                     type="button"
@@ -347,6 +347,10 @@
             </div>
 
             <div class="flex-1 overflow-y-auto px-6 py-5">
+                <div x-show="modal === 'transaction'">
+                    <livewire:transactions.transaction-form :modal="true" :key="'dashboard-transaction-modal'" />
+                </div>
+
                 <div x-show="modal === 'category'">
                     <livewire:categories.category-form :modal="true" :key="'dashboard-category-modal'" />
                 </div>
@@ -354,5 +358,4 @@
         </div>
     </div>
 </div>
-
 
