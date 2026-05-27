@@ -81,7 +81,51 @@ test('credit card expenses remain pending until payment control', function () {
 
     expect($transaction->entries)->toHaveCount(3)
         ->and($transaction->entries->pluck('status')->unique()->values()->all())->toBe(['pending'])
-        ->and((float) $transaction->entries->sum('value'))->toBe(338.0);
+        ->and((float) $transaction->entries->sum('value'))->toBe(338.0)
+        ->and($transaction->entries->pluck('installment_number')->values()->all())->toBe([1, 2, 3])
+        ->and($transaction->entries->pluck('installments_total')->unique()->values()->all())->toBe([3])
+        ->and($transaction->entries->first()->due_date->format('Y-m-d'))->toBe('2026-05-10');
+});
+
+test('transaction form creates credit card purchase using total value', function () {
+    $user = User::factory()->create();
+    $this->actingAs($user);
+
+    $category = Category::create([
+        'user_id' => $user->id,
+        'name' => 'Moveis',
+        'type' => 'expense',
+    ]);
+
+    $card = CreditCard::create([
+        'user_id' => $user->id,
+        'name' => 'Principal',
+        'limit' => 5000,
+        'closing_day' => 20,
+        'due_day' => 10,
+    ]);
+
+    Livewire::test(TransactionForm::class)
+        ->set('type', 'expense')
+        ->set('description', 'Sofa')
+        ->set('total_value', 1000)
+        ->set('start_date', '2026-05-10')
+        ->set('category_id', $category->id)
+        ->set('credit_card_id', $card->id)
+        ->set('card_value_mode', 'total')
+        ->set('installments', 3)
+        ->call('save')
+        ->assertHasNoErrors();
+
+    $transaction = Transaction::where('user_id', $user->id)
+        ->where('description', 'Sofa')
+        ->firstOrFail();
+
+    expect((float) $transaction->total_value)->toBe(1000.0)
+        ->and($transaction->entries)->toHaveCount(3)
+        ->and((float) $transaction->entries->sum('value'))->toBe(1000.0)
+        ->and($transaction->entries->pluck('value')->map(fn ($value) => (float) $value)->all())->toBe([333.34, 333.33, 333.33])
+        ->and($transaction->entries->pluck('installment_number')->values()->all())->toBe([1, 2, 3]);
 });
 
 test('transaction form creates credit card purchase using installment value', function () {
@@ -121,7 +165,9 @@ test('transaction form creates credit card purchase using installment value', fu
         ->and($transaction->account_id)->toBeNull()
         ->and($transaction->is_fixed)->toBeFalse()
         ->and($transaction->entries)->toHaveCount(3)
-        ->and((float) $transaction->entries->first()->value)->toBe(250.0);
+        ->and((float) $transaction->entries->sum('value'))->toBe(750.0)
+        ->and((float) $transaction->entries->first()->value)->toBe(250.0)
+        ->and($transaction->entries->pluck('installment_number')->values()->all())->toBe([1, 2, 3]);
 });
 
 test('transaction form disables fixed flag when saving credit card purchase', function () {

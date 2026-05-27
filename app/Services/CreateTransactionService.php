@@ -89,6 +89,7 @@ class CreateTransactionService
                 'user_id' => $transaction->user_id,
                 'transaction_id' => $transaction->id,
                 'reference_date' => $start->copy()->addMonths($i),
+                'due_date' => $start->copy()->addMonths($i),
                 'value' => $transaction->total_value,
                 'status' => 'pending',
                 'account_id' => $transaction->account_id,
@@ -102,6 +103,7 @@ class CreateTransactionService
             'user_id' => $transaction->user_id,
             'transaction_id' => $transaction->id,
             'reference_date' => Carbon::parse($transaction->start_date)->startOfMonth(),
+            'due_date' => Carbon::parse($transaction->start_date),
             'value' => $transaction->total_value,
             'status' => 'paid',
             'account_id' => $transaction->account_id,
@@ -122,12 +124,16 @@ class CreateTransactionService
 
         for ($i = 0; $i < $installments; $i++) {
             $installmentCents = $baseInstallmentCents + ($i < $remainderCents ? 1 : 0);
+            $referenceDate = $firstReference->copy()->addMonths($i);
 
             Entry::create([
                 'user_id' => $transaction->user_id,
                 'transaction_id' => $transaction->id,
-                'reference_date' => $firstReference->copy()->addMonths($i),
+                'reference_date' => $referenceDate,
+                'due_date' => $this->dateInMonth($referenceDate, $card->due_day),
                 'value' => $installmentCents / 100,
+                'installment_number' => $i + 1,
+                'installments_total' => $installments,
                 'status' => 'pending',
                 'credit_card_id' => $card->id,
             ]);
@@ -136,12 +142,19 @@ class CreateTransactionService
 
     private function calculateFirstInvoiceMonth(Carbon $purchaseDate, CreditCard $card): Carbon
     {
-        $closingDate = $purchaseDate->copy()->day($card->closing_day);
+        $closingDate = $this->dateInMonth($purchaseDate, $card->closing_day);
 
         if ($purchaseDate->greaterThan($closingDate)) {
             return $purchaseDate->copy()->addMonth()->startOfMonth();
         }
 
         return $purchaseDate->copy()->startOfMonth();
+    }
+
+    private function dateInMonth(Carbon $date, int $day): Carbon
+    {
+        $month = $date->copy()->startOfMonth();
+
+        return $month->day(min($day, $month->daysInMonth));
     }
 }

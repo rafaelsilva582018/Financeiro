@@ -53,11 +53,11 @@
                                 $origin = $entry->account?->name ?? $entry->creditCard?->name ?? 'Sem conta vinculada';
                             @endphp
                             <tr class="transition hover:bg-zinc-50 dark:hover:bg-zinc-950/40">
-                                <td class="px-5 py-4"><div class="flex items-start gap-3"><span class="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg {{ $isIncome ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-950 dark:text-emerald-300' : 'bg-rose-50 text-rose-600 dark:bg-rose-950 dark:text-rose-300' }}"><x-ui.icon :name="$isIncome ? 'arrow-up' : 'arrow-down'" class="h-4 w-4" /></span><div><p class="font-semibold text-zinc-950 dark:text-white">{{ $transaction?->description ?? 'Transação removida' }}</p><p class="mt-1 text-xs text-zinc-500 dark:text-zinc-400">{{ $isIncome ? 'Receita' : 'Despesa' }}</p></div></div></td>
+                                <td class="px-5 py-4"><div class="flex items-start gap-3"><span class="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg {{ $isIncome ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-950 dark:text-emerald-300' : 'bg-rose-50 text-rose-600 dark:bg-rose-950 dark:text-rose-300' }}"><x-ui.icon :name="$isIncome ? 'arrow-up' : 'arrow-down'" class="h-4 w-4" /></span><div><p class="font-semibold text-zinc-950 dark:text-white">{{ $transaction?->description ?? 'Transação removida' }}</p><p class="mt-1 text-xs text-zinc-500 dark:text-zinc-400">{{ $isIncome ? 'Receita' : 'Despesa' }}@if ($entry->installment_number && $entry->installments_total) · Parcela {{ $entry->installment_number }}/{{ $entry->installments_total }} @endif</p></div></div></td>
                                 <td class="px-5 py-4"><span class="inline-flex rounded-full bg-zinc-100 px-2.5 py-1 text-xs font-semibold text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300">{{ $transaction?->category?->name ?? 'Sem categoria' }}</span></td>
                                 <td class="px-5 py-4 text-zinc-600 dark:text-zinc-300">{{ $origin }}</td>
                                 <td class="px-5 py-4 text-center text-zinc-600 dark:text-zinc-300">
-                                    <p>{{ $entry->reference_date->format('d/m/Y') }}</p>
+                                    <p>{{ ($entry->due_date ?? $entry->reference_date)->format('d/m/Y') }}</p>
                                     @if ($transaction?->start_date && ! $transaction->start_date->isSameMonth($entry->reference_date))
                                         <p class="mt-1 text-xs text-zinc-500 dark:text-zinc-500">
                                             Compra: {{ $transaction->start_date->format('d/m/Y') }}

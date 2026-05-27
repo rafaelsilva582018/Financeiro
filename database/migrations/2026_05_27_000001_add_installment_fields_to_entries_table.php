@@ -1,0 +1,28 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        Schema::table('entries', function (Blueprint $table) {
+            $table->unsignedInteger('installment_number')->nullable()->after('value');
+            $table->unsignedInteger('installments_total')->nullable()->after('installment_number');
+            $table->date('due_date')->nullable()->after('reference_date');
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::table('entries', function (Blueprint $table) {
+            $table->dropColumn([
+                'installment_number',
+                'installments_total',
+                'due_date',
+            ]);
+        });
+    }
+};

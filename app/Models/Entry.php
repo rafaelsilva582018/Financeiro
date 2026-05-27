@@ -10,7 +10,10 @@ class Entry extends Model
         'user_id',
         'transaction_id',
         'reference_date',
+        'due_date',
         'value',
+        'installment_number',
+        'installments_total',
         'status',
         'account_id',
         'credit_card_id',
@@ -18,7 +21,10 @@ class Entry extends Model
 
     protected $casts = [
         'reference_date' => 'date',
+        'due_date' => 'date',
         'value' => 'decimal:2',
+        'installment_number' => 'integer',
+        'installments_total' => 'integer',
     ];
 
     /*
